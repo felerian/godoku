@@ -1,8 +1,19 @@
-package main
+package digitset
 
 import (
 	"testing"
 )
+
+func TestShouldNotContainAnyDigits(t *testing.T) {
+	// when
+	var ds DigitSet = Empty()
+	// then
+	for digit := uint(1); digit <= uint(9); digit++ {
+		if ds.Contains(digit) {
+			t.Errorf("DigitSet should not contain any digits (contained: %s).", digit)
+		}
+	}
+}
 
 func TestShouldContainAllDigits(t *testing.T) {
 	// when
@@ -10,8 +21,17 @@ func TestShouldContainAllDigits(t *testing.T) {
 	// then
 	for digit := uint(1); digit <= uint(9); digit++ {
 		if !ds.Contains(digit) {
-			t.Errorf("DigitSet should contain all digits (mising: %s).", digit)
+			t.Errorf("DigitSet should contain all digits (missing: %s).", digit)
 		}
+	}
+}
+
+func TestShouldContainSingleDigit(t *testing.T) {
+	// when
+	var ds DigitSet = Single(3)
+	// then
+	if !ds.Contains(3) {
+		t.Error("DigitSet should contain 3.")
 	}
 }
 

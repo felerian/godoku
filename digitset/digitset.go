@@ -1,4 +1,4 @@
-package main
+package digitset
 
 import (
 	"errors"
@@ -20,6 +20,16 @@ func (ds *DigitSet) Contains(digit uint) bool {
 
 func All() DigitSet {
 	return 1022
+}
+
+func Empty() DigitSet {
+	return 0
+}
+
+func Single(value uint) DigitSet {
+	set := Empty()
+	set.Add(value)
+	return set
 }
 
 func (ds *DigitSet) Value() (uint, error) {
