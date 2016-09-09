@@ -8,7 +8,7 @@ import (
 
 func main() {
 	// Sudoku board
-	sudoku := sudoku.New()
+	sudoku := sudoku.Sudoku{}
 	sudoku[2][3].Add(4)
 	sudoku.Simplify()
 	fmt.Printf(sudoku.String())
