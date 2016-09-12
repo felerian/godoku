@@ -7,15 +7,15 @@ import (
 
 func TestRows(t *testing.T) {
 	// given
-	sudoku := Sudoku{}
+	solver := Solver{}
 	// when
-	group := row(&sudoku, 0)
+	group := row(&solver, 0)
 	for i := uint(0); i < 9; i++ {
 		group(i).Add(i + 1)
 	}
 	// then
 	for c := uint(0); c < 9; c++ {
-		if value, err := sudoku[0][c].Value(); value != c+1 || err != nil {
+		if value, err := solver[0][c].Value(); value != c+1 || err != nil {
 			t.Errorf("expected: %d, actual: %d", value, c)
 		}
 	}
@@ -23,15 +23,15 @@ func TestRows(t *testing.T) {
 
 func TestCols(t *testing.T) {
 	// given
-	sudoku := Sudoku{}
+	solver := Solver{}
 	// when
-	group := col(&sudoku, 0)
+	group := col(&solver, 0)
 	for i := uint(0); i < 9; i++ {
 		group(i).Add(i + 1)
 	}
 	// then
 	for r := uint(0); r < 9; r++ {
-		if value, err := sudoku[r][0].Value(); value != r+1 || err != nil {
+		if value, err := solver[r][0].Value(); value != r+1 || err != nil {
 			t.Errorf("expected: %d, actual: %d", value, r)
 		}
 	}
@@ -42,7 +42,7 @@ func TestFieldToCoords(t *testing.T) {
 	var f uint = 2
 	var i uint = 1
 	// when
-	r, c := fieldsToCoords(f, i)
+	r, c := blocksToCoords(f, i)
 	// then
 	if r != 0 || c != 7 {
 		t.Errorf("expected: (0, 7), actual: (%d, %d)", r, c)
@@ -51,80 +51,80 @@ func TestFieldToCoords(t *testing.T) {
 
 func TestSimplifyRow(t *testing.T) {
 	// given
-	sudoku := Sudoku{}
+	solver := Solver{}
 	for c := uint(0); c < 9; c++ {
 		if c == 4 {
-			sudoku[0][c] = digitset.All()
+			solver[0][c] = digitset.All()
 		} else {
-			sudoku[0][c] = digitset.Single(c + 1)
+			solver[0][c] = digitset.Single(c + 1)
 		}
 	}
-	if value, err := sudoku[0][4].Value(); err == nil {
+	if value, err := solver[0][4].Value(); err == nil {
 		t.Errorf("Should be undetermined (%+v)", value)
 	}
 	// when
-	changed := SimplifyByGroup(&sudoku, row)
+	changed := simplifyByGroup(&solver, row)
 	// then
 	if !changed {
 		t.Error("Should have been changed.")
 	}
-	if value, err := sudoku[0][4].Value(); value != 5 || err != nil {
+	if value, err := solver[0][4].Value(); value != 5 || err != nil {
 		t.Errorf("Should have been simplified to 5 (%+v)", value)
 	}
 }
 
 func TestSimplifyCol(t *testing.T) {
 	// given
-	sudoku := Sudoku{}
+	solver := Solver{}
 	for r := uint(0); r < 9; r++ {
 		if r == 6 {
-			sudoku[r][0] = digitset.All()
+			solver[r][0] = digitset.All()
 		} else {
-			sudoku[r][0] = digitset.Single(r + 1)
+			solver[r][0] = digitset.Single(r + 1)
 		}
 	}
-	if value, err := sudoku[6][0].Value(); err == nil {
+	if value, err := solver[6][0].Value(); err == nil {
 		t.Errorf("Should be undetermined (%+v)", value)
 	}
 	// when
-	changed := SimplifyByGroup(&sudoku, col)
+	changed := simplifyByGroup(&solver, col)
 	// then
 	if !changed {
 		t.Error("Should have been changed.")
 	}
-	if value, err := sudoku[6][0].Value(); value != 7 || err != nil {
+	if value, err := solver[6][0].Value(); value != 7 || err != nil {
 		t.Errorf("Should have been simplified to 7 (%+v)", value)
 	}
 }
 
 func TestSimplifyField(t *testing.T) {
 	// given
-	sudoku := Sudoku{}
+	solver := Solver{}
 	for i := uint(0); i < 9; i++ {
-		r, c := fieldsToCoords(0, i)
+		r, c := blocksToCoords(0, i)
 		if i == 8 {
-			sudoku[r][c] = digitset.All()
+			solver[r][c] = digitset.All()
 		} else {
-			sudoku[r][c] = digitset.Single(i + 1)
+			solver[r][c] = digitset.Single(i + 1)
 		}
 	}
-	if value, err := sudoku[2][2].Value(); err == nil {
+	if value, err := solver[2][2].Value(); err == nil {
 		t.Errorf("Should be undetermined (%+v)", value)
 	}
 	// when
-	changed := SimplifyByGroup(&sudoku, field)
+	changed := simplifyByGroup(&solver, block)
 	// then
 	if !changed {
 		t.Error("Should have been changed.")
 	}
-	if value, err := sudoku[2][2].Value(); value != 9 || err != nil {
+	if value, err := solver[2][2].Value(); value != 9 || err != nil {
 		t.Errorf("Should have been simplified to 9 (%+v)", value)
 	}
 }
 
-func TestInit(t *testing.T) {
+func Testinit(t *testing.T) {
 	// given
-	var template Template = [9][9]uint{
+	var sudoku Sudoku = [9][9]uint{
 		[9]uint{1, 0, 0, 0, 0, 0, 0, 0, 0},
 		[9]uint{0, 0, 0, 0, 0, 0, 0, 0, 0},
 		[9]uint{0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -136,19 +136,19 @@ func TestInit(t *testing.T) {
 		[9]uint{0, 0, 0, 0, 0, 0, 0, 0, 0},
 	}
 	// when
-	sudoku := Init(template)
+	solver := sudoku.prepare()
 	// then
-	if value, err := sudoku[0][0].Value(); value != 1 || err != nil {
+	if value, err := solver[0][0].Value(); value != 1 || err != nil {
 		t.Errorf("expected: 1, actual: %d", value)
 	}
-	if _, err := sudoku[1][1].Value(); err == nil {
+	if _, err := solver[1][1].Value(); err == nil {
 		t.Error("Should be unknown.")
 	}
 }
 
 func TestSimplify(t *testing.T) {
 	// given
-	var template Template = [9][9]uint{
+	var sudoku Sudoku = [9][9]uint{
 		[9]uint{7, 2, 0, 0, 0, 3, 0, 8, 1},
 		[9]uint{3, 0, 8, 1, 0, 0, 0, 6, 9},
 		[9]uint{0, 9, 0, 6, 2, 8, 0, 0, 4},
@@ -159,11 +159,34 @@ func TestSimplify(t *testing.T) {
 		[9]uint{2, 6, 0, 4, 8, 0, 3, 0, 0},
 		[9]uint{0, 0, 3, 0, 5, 0, 6, 1, 7},
 	}
-	sudoku := Init(template)
+	solver := sudoku.prepare()
 	// when
-	sudoku.Simplify()
+	solver.simplify()
 	// then
-	if !sudoku.Solved() {
+	if !solver.solved() {
 		t.Error("Should be solved.")
+	}
+}
+
+func TestPrintSudoku(t *testing.T) {
+	// given
+	sudoku := Sudoku{}
+	sudoku[4][4] = 1
+	// when
+	stringRepr := sudoku.String()
+	// then
+	if !(stringRepr == "\n"+
+		"  _ _ _  _ _ _  _ _ _\n"+
+		"  _ _ _  _ _ _  _ _ _\n"+
+		"  _ _ _  _ _ _  _ _ _\n"+
+		"\n"+
+		"  _ _ _  _ _ _  _ _ _\n"+
+		"  _ _ _  _ 1 _  _ _ _\n"+
+		"  _ _ _  _ _ _  _ _ _\n"+
+		"\n"+
+		"  _ _ _  _ _ _  _ _ _\n"+
+		"  _ _ _  _ _ _  _ _ _\n"+
+		"  _ _ _  _ _ _  _ _ _\n\n") {
+		t.Error("Incorrect string representation.")
 	}
 }

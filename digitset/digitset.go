@@ -18,6 +18,16 @@ func (ds *DigitSet) Contains(digit uint) bool {
 	return 1 == (*ds >> digit & 1)
 }
 
+func (ds *DigitSet) Count() uint {
+	var count uint = 0
+	for i := uint(0); i < 9; i++ {
+		if ds.Contains(i) {
+			count++
+		}
+	}
+	return count
+}
+
 func All() DigitSet {
 	return 1022
 }
