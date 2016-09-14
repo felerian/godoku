@@ -1,14 +1,13 @@
 package sudoku
 
 import (
-	"fmt"
 	"github.com/felerian/godoku/digitset"
 	"strconv"
 )
 
 type Sudoku [9][9]uint
 
-// String returns a string represantation of a sudoku
+// String returns a string representation of a sudoku
 func (s *Sudoku) String() string {
 	var result string
 	for r := 0; r < 9; r++ {
@@ -40,11 +39,11 @@ func (sudoku *Sudoku) Solve() []Sudoku {
 }
 
 // prepare creates a solver from a sudoku
-func (s *Sudoku) prepare() Solver {
+func (sudoku *Sudoku) prepare() Solver {
 	solver := Solver{}
 	for r := 0; r < 9; r++ {
 		for c := 0; c < 9; c++ {
-			if value := s[r][c]; value > 0 && value < 10 {
+			if value := sudoku[r][c]; value > 0 && value < 10 {
 				solver[r][c] = digitset.Single(value)
 			} else {
 				solver[r][c] = digitset.All()
@@ -57,7 +56,6 @@ func (s *Sudoku) prepare() Solver {
 type Solver [9][9]digitset.DigitSet
 
 func recursiveSolve(s Solver) []Sudoku {
-	fmt.Print("recursion\n")
 	s.simplify()
 	if s.solved() {
 		return []Sudoku{s.flatten()}

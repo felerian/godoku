@@ -1,30 +1,31 @@
 package main
 
 import (
-	"fmt"
+	"encoding/json"
 	"github.com/felerian/godoku/sudoku"
+	"log"
+	"net/http"
 )
 
-func main() {
-	var sudoku sudoku.Sudoku = [9][9]uint{
-		[9]uint{0, 0, 0, 0, 0, 3, 0, 8, 0},
-		[9]uint{3, 0, 8, 1, 0, 0, 0, 0, 9},
-		[9]uint{0, 9, 0, 6, 2, 0, 0, 0, 4},
-		[9]uint{0, 0, 9, 0, 0, 7, 0, 2, 0},
-		[9]uint{8, 0, 0, 0, 0, 0, 1, 0, 0},
-		[9]uint{0, 0, 0, 0, 0, 2, 0, 0, 3},
-		[9]uint{0, 0, 0, 7, 0, 6, 8, 0, 0},
-		[9]uint{2, 0, 0, 4, 8, 0, 3, 0, 0},
-		[9]uint{0, 0, 3, 0, 5, 0, 0, 1, 0},
+type Response struct {
+	Solutions []sudoku.Sudoku
+}
+
+func handleSolve(rw http.ResponseWriter, req *http.Request) {
+	s := sudoku.Sudoku{}
+	if decErr := json.NewDecoder(req.Body).Decode(&s); decErr != nil {
+		log.Println(decErr)
+		rw.WriteHeader(400)
+		return
 	}
-	fmt.Println("problem:")
-	fmt.Print(sudoku.String())
+	response := Response{
+		Solutions: s.Solve(),
+	}
+	json.NewEncoder(rw).Encode(response)
+}
 
-	solutions := sudoku.Solve()
-	nr := len(solutions)
-
-	fmt.Printf("\n%d solutions:\n", nr)
-	//for i := 0; i < nr; i++ {
-	//	fmt.Print(solutions[i].String())
-	//}
+func main() {
+	log.Println("Godoku server started.")
+	http.HandleFunc("/solve", handleSolve)
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }
