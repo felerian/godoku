@@ -168,6 +168,138 @@ func TestSimplify(t *testing.T) {
 	}
 }
 
+func TestShouldBeValid(t *testing.T) {
+	// given
+	var sudoku Sudoku = [9][9]uint{
+		[9]uint{7, 2, 0, 0, 0, 3, 0, 8, 1},
+		[9]uint{3, 0, 8, 1, 0, 0, 0, 6, 9},
+		[9]uint{0, 9, 0, 6, 2, 8, 0, 0, 4},
+		[9]uint{6, 0, 9, 5, 0, 7, 0, 2, 0},
+		[9]uint{8, 5, 2, 0, 9, 0, 1, 0, 0},
+		[9]uint{0, 0, 0, 0, 6, 2, 9, 5, 3},
+		[9]uint{0, 1, 5, 7, 0, 6, 8, 0, 0},
+		[9]uint{2, 6, 0, 4, 8, 0, 3, 0, 0},
+		[9]uint{0, 0, 3, 0, 5, 0, 6, 1, 7},
+	}
+	solver := sudoku.prepare()
+	// when
+	v := solver.valid()
+	// then
+	if !v {
+		t.Error("Should be valid.")
+	}
+}
+
+func TestShouldBeInvalidForInvalidRow(t *testing.T) {
+	// given
+	var sudoku Sudoku = [9][9]uint{
+		[9]uint{7, 2, 0, 0, 0, 3, 0, 8, 2},
+		[9]uint{3, 0, 8, 1, 0, 0, 0, 6, 9},
+		[9]uint{0, 9, 0, 6, 2, 8, 0, 0, 4},
+		[9]uint{6, 0, 9, 5, 0, 7, 0, 2, 0},
+		[9]uint{8, 5, 2, 0, 9, 0, 1, 0, 0},
+		[9]uint{0, 0, 0, 0, 6, 2, 9, 5, 3},
+		[9]uint{0, 1, 5, 7, 0, 6, 8, 0, 0},
+		[9]uint{2, 6, 0, 4, 8, 0, 3, 0, 0},
+		[9]uint{0, 0, 3, 0, 5, 0, 6, 1, 7},
+	}
+	solver := sudoku.prepare()
+	// when
+	v := solver.valid()
+	// then
+	if v {
+		t.Error("Should be invalid.")
+	}
+}
+
+func TestShouldBeInvalidForInvalidColumn(t *testing.T) {
+	// given
+	var sudoku Sudoku = [9][9]uint{
+		[9]uint{7, 2, 0, 0, 0, 3, 0, 8, 1},
+		[9]uint{3, 0, 8, 1, 0, 0, 0, 6, 9},
+		[9]uint{0, 9, 0, 6, 2, 8, 0, 0, 4},
+		[9]uint{6, 0, 9, 5, 0, 7, 0, 2, 0},
+		[9]uint{8, 5, 2, 0, 9, 0, 1, 0, 0},
+		[9]uint{0, 0, 0, 0, 6, 2, 9, 5, 3},
+		[9]uint{0, 1, 5, 7, 0, 6, 8, 0, 0},
+		[9]uint{7, 6, 0, 4, 8, 0, 3, 0, 0},
+		[9]uint{0, 0, 3, 0, 5, 0, 6, 1, 7},
+	}
+	solver := sudoku.prepare()
+	// when
+	v := solver.valid()
+	// then
+	if v {
+		t.Error("Should be invalid.")
+	}
+}
+
+func TestShouldBeInvalidForInvalidBlock(t *testing.T) {
+	// given
+	var sudoku Sudoku = [9][9]uint{
+		[9]uint{7, 7, 0, 0, 0, 3, 0, 8, 1},
+		[9]uint{3, 0, 8, 1, 0, 0, 0, 6, 9},
+		[9]uint{0, 9, 0, 6, 2, 8, 0, 0, 4},
+		[9]uint{6, 0, 9, 5, 0, 7, 0, 2, 0},
+		[9]uint{8, 5, 2, 0, 9, 0, 1, 0, 0},
+		[9]uint{0, 0, 0, 0, 6, 2, 9, 5, 3},
+		[9]uint{0, 1, 5, 7, 0, 6, 8, 0, 0},
+		[9]uint{2, 6, 0, 4, 8, 0, 3, 0, 0},
+		[9]uint{0, 0, 3, 0, 5, 0, 6, 1, 7},
+	}
+	solver := sudoku.prepare()
+	// when
+	v := solver.valid()
+	// then
+	if v {
+		t.Error("Should be invalid.")
+	}
+}
+
+func TestFindSingleSolution(t *testing.T) {
+	// given
+	var sudoku Sudoku = [9][9]uint{
+		[9]uint{7, 2, 0, 0, 0, 3, 0, 8, 1},
+		[9]uint{3, 0, 8, 1, 0, 0, 0, 6, 9},
+		[9]uint{0, 9, 0, 6, 2, 8, 0, 0, 4},
+		[9]uint{6, 0, 9, 5, 0, 7, 0, 2, 0},
+		[9]uint{8, 5, 2, 0, 9, 0, 1, 0, 0},
+		[9]uint{0, 0, 0, 0, 6, 2, 9, 5, 3},
+		[9]uint{0, 1, 5, 7, 0, 6, 8, 0, 0},
+		[9]uint{2, 6, 0, 4, 8, 0, 3, 0, 0},
+		[9]uint{0, 0, 3, 0, 5, 0, 6, 1, 7},
+	}
+	maxSolutions := 3
+	// when
+	solutions := sudoku.Solve(maxSolutions)
+	// then
+	if len(solutions) != 1 {
+		t.Errorf("expected: 1 solutions, actual: %d", len(solutions))
+	}
+}
+
+func TestFindThreeSolutions(t *testing.T) {
+	// given
+	var sudoku Sudoku = [9][9]uint{
+		[9]uint{0, 0, 0, 0, 0, 3, 0, 8, 0},
+		[9]uint{3, 0, 8, 1, 0, 0, 0, 6, 9},
+		[9]uint{0, 9, 0, 6, 2, 8, 0, 0, 4},
+		[9]uint{6, 0, 9, 5, 0, 7, 0, 2, 0},
+		[9]uint{8, 5, 2, 0, 9, 0, 1, 0, 0},
+		[9]uint{0, 0, 0, 0, 6, 2, 9, 5, 3},
+		[9]uint{0, 1, 5, 7, 0, 6, 8, 0, 0},
+		[9]uint{2, 6, 0, 4, 8, 0, 3, 0, 0},
+		[9]uint{0, 0, 3, 0, 5, 0, 6, 1, 7},
+	}
+	maxSolutions := 3
+	// when
+	solutions := sudoku.Solve(maxSolutions)
+	// then
+	if len(solutions) != maxSolutions {
+		t.Errorf("expected: %d solutions, actual: %d", maxSolutions, len(solutions))
+	}
+}
+
 func TestPrintSudoku(t *testing.T) {
 	// given
 	sudoku := Sudoku{}

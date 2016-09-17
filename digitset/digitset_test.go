@@ -107,3 +107,15 @@ func TestDigitSetShouldHaveMultipleValues(t *testing.T) {
 		t.Error("DigitSet should contain multiple values 4 and 5.")
 	}
 }
+
+func TestCount(t *testing.T) {
+	// given
+	ds := Single(4)
+	// when
+	ds.Add(4)
+	ds.Add(5)
+	// then
+	if ds.Count() != 2 {
+		t.Errorf("expected: 2, actual: %d", ds.Count())
+	}
+}

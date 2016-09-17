@@ -5,13 +5,24 @@ Godoku
 
 A simple sudoku solver, written in Go.
 
-Start the server:
+How to use
+----------
 
 ```
+// fetch "godoku":
+go get github.com/felerian/godoku
+
+// change to godoku directory:
+cd $GOPATH/src/github.com/felerian/godoku
+
+// run godoku server:
 go run godoku.go
+
+// run tests with coverage:
+go test -cover ./...
 ```
 
-Call with a sudoku to solve:
+To solve a sudoku, provide it as JSON in a POST request:
 
 ```
 curl -kv -X POST localhost:8080/solve -H "Content-Type: application/json" -d @- <<EOF
@@ -26,3 +37,5 @@ curl -kv -X POST localhost:8080/solve -H "Content-Type: application/json" -d @- 
  [0, 0, 3, 0, 5, 0, 0, 1, 0]]
 EOF
 ```
+
+The resulting solutions (100 solutions max.) are returned as a JSON array.

@@ -33,9 +33,10 @@ func (s *Sudoku) String() string {
 }
 
 // Solve a sudoku
-func (sudoku *Sudoku) Solve() []Sudoku {
+func (sudoku *Sudoku) Solve(maxSolutions int) []Sudoku {
 	solver := sudoku.prepare()
-	return recursiveSolve(solver)
+	count := 0
+	return recursiveSolve(solver, maxSolutions, &count)
 }
 
 // prepare creates a solver from a sudoku
@@ -55,9 +56,13 @@ func (sudoku *Sudoku) prepare() Solver {
 
 type Solver [9][9]digitset.DigitSet
 
-func recursiveSolve(s Solver) []Sudoku {
+func recursiveSolve(s Solver, maxSolutions int, count *int) []Sudoku {
 	s.simplify()
+	if !s.valid() {
+		return []Sudoku{}
+	}
 	if s.solved() {
+		*count++
 		return []Sudoku{s.flatten()}
 	}
 	solutions := []Sudoku{}
@@ -66,7 +71,11 @@ func recursiveSolve(s Solver) []Sudoku {
 	for i := uint(0); i < 9; i++ {
 		if choices.Contains(i) {
 			s[r][c] = digitset.Single(i)
-			solutions = append(solutions, recursiveSolve(s)...)
+			if *count < maxSolutions {
+				solutions = append(solutions, recursiveSolve(s, maxSolutions, count)...)
+			} else {
+				return solutions
+			}
 		}
 	}
 	return solutions
@@ -95,6 +104,31 @@ func (s *Solver) solved() bool {
 		for c := 0; c < 9; c++ {
 			if _, err := s[r][c].Value(); err != nil {
 				return false
+			}
+		}
+	}
+	return true
+}
+
+// valid returns true, if this solver is valid (contains no contradictions)
+func (s *Solver) valid() bool {
+	v := validByGroup(s, row)
+	v = v && validByGroup(s, col)
+	v = v && validByGroup(s, block)
+	return v
+}
+
+// validByGroup validates this solver along a row, column or block
+func validByGroup(s *Solver, accessor func(*Solver, uint) func(uint) *digitset.DigitSet) bool {
+	for g := uint(0); g < 9; g++ {
+		set := digitset.Empty()
+		group := accessor(s, g)
+		for i := uint(0); i < 9; i++ {
+			if value, err := group(i).Value(); err == nil {
+				if set.Contains(value) {
+					return false
+				}
+				set.Add(value)
 			}
 		}
 	}
@@ -154,7 +188,7 @@ func (s *Solver) simplify() {
 	}
 }
 
-// simplifyByGroup this solver in-place along a row, column or block
+// simplifyByGroup simplifies this solver in-place along a row, column or block
 func simplifyByGroup(s *Solver, accessor func(*Solver, uint) func(uint) *digitset.DigitSet) bool {
 	var changed bool
 	for g := uint(0); g < 9; g++ {

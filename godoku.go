@@ -7,8 +7,10 @@ import (
 	"net/http"
 )
 
+const MAX_SOLUTIONS int = 100
+
 type Response struct {
-	Solutions []sudoku.Sudoku
+	Solutions []sudoku.Sudoku `json:"solutions"`
 }
 
 func handleSolve(rw http.ResponseWriter, req *http.Request) {
@@ -19,7 +21,7 @@ func handleSolve(rw http.ResponseWriter, req *http.Request) {
 		return
 	}
 	response := Response{
-		Solutions: s.Solve(),
+		Solutions: s.Solve(MAX_SOLUTIONS),
 	}
 	json.NewEncoder(rw).Encode(response)
 }
