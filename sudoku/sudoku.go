@@ -1,3 +1,6 @@
+/*
+Package sudoku provides means to solve sudokus.
+*/
 package sudoku
 
 import (
@@ -5,10 +8,11 @@ import (
 	"strconv"
 )
 
+// Sudoku board
 type Sudoku [9][9]uint
 
 // String returns a string representation of a sudoku
-func (s *Sudoku) String() string {
+func (sudoku *Sudoku) String() string {
 	var result string
 	for r := 0; r < 9; r++ {
 		if r%3 == 0 {
@@ -19,7 +23,7 @@ func (s *Sudoku) String() string {
 			if c%3 == 0 {
 				result += " "
 			}
-			value := (*s)[r][c]
+			value := (*sudoku)[r][c]
 			if value > 0 && value < 10 {
 				result += strconv.Itoa(int(value))
 			} else {
@@ -54,6 +58,7 @@ func (sudoku *Sudoku) prepare() Solver {
 	return solver
 }
 
+// Solver for a sudoku
 type Solver [9][9]digitset.DigitSet
 
 func recursiveSolve(s Solver, maxSolutions int, count *int) []Sudoku {
@@ -173,14 +178,14 @@ func block(solver *Solver, f uint) func(uint) *digitset.DigitSet {
 }
 
 func blocksToCoords(f uint, i uint) (uint, uint) {
-	var r uint = 3*(f/3) + i/3
-	var c uint = 3*(f%3) + i%3
+	r := 3*(f/3) + i/3
+	c := 3*(f%3) + i%3
 	return r, c
 }
 
 // simplify this solver in-place without resorting to guesses
 func (s *Solver) simplify() {
-	var changed bool = true
+	changed := true
 	for changed {
 		changed = simplifyByGroup(s, row)
 		changed = changed || simplifyByGroup(s, col)

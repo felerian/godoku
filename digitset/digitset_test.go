@@ -6,29 +6,29 @@ import (
 
 func TestShouldNotContainAnyDigits(t *testing.T) {
 	// when
-	var ds DigitSet = Empty()
+	ds := Empty()
 	// then
 	for digit := uint(1); digit <= uint(9); digit++ {
 		if ds.Contains(digit) {
-			t.Errorf("DigitSet should not contain any digits (contained: %s).", digit)
+			t.Errorf("DigitSet should not contain any digits (contained: %d).", digit)
 		}
 	}
 }
 
 func TestShouldContainAllDigits(t *testing.T) {
 	// when
-	var ds DigitSet = All()
+	ds := All()
 	// then
 	for digit := uint(1); digit <= uint(9); digit++ {
 		if !ds.Contains(digit) {
-			t.Errorf("DigitSet should contain all digits (missing: %s).", digit)
+			t.Errorf("DigitSet should contain all digits (missing: %d).", digit)
 		}
 	}
 }
 
 func TestShouldContainSingleDigit(t *testing.T) {
 	// when
-	var ds DigitSet = Single(3)
+	ds := Single(3)
 	// then
 	if !ds.Contains(3) {
 		t.Error("DigitSet should contain 3.")
@@ -37,7 +37,7 @@ func TestShouldContainSingleDigit(t *testing.T) {
 
 func TestAddToDigitSet(t *testing.T) {
 	// given
-	var ds DigitSet = 0
+	var ds DigitSet
 	// when
 	ds.Add(3)
 	// then
@@ -48,7 +48,7 @@ func TestAddToDigitSet(t *testing.T) {
 
 func TestAddingToDigitSetShouldBeIdempotent(t *testing.T) {
 	// given
-	var ds DigitSet = 0
+	var ds DigitSet
 	// when
 	ds.Add(3)
 	ds.Add(3)
@@ -61,7 +61,7 @@ func TestAddingToDigitSetShouldBeIdempotent(t *testing.T) {
 
 func TestRemoveFromDigitSet(t *testing.T) {
 	// given
-	var ds DigitSet = 0
+	var ds DigitSet
 	// when
 	ds.Add(4)
 	ds.Remove(4)
@@ -73,7 +73,7 @@ func TestRemoveFromDigitSet(t *testing.T) {
 
 func TestRemovingFromDigitSetShouldBeIdempotent(t *testing.T) {
 	// given
-	var ds DigitSet = 0
+	var ds DigitSet
 	// when
 	ds.Add(4)
 	ds.Remove(4)
@@ -87,7 +87,7 @@ func TestRemovingFromDigitSetShouldBeIdempotent(t *testing.T) {
 
 func TestDigitSetShouldHaveUniqueValue(t *testing.T) {
 	// given
-	var ds DigitSet = 0
+	var ds DigitSet
 	// when
 	ds.Add(4)
 	// then
@@ -98,7 +98,7 @@ func TestDigitSetShouldHaveUniqueValue(t *testing.T) {
 
 func TestDigitSetShouldHaveMultipleValues(t *testing.T) {
 	// given
-	var ds DigitSet = 0
+	var ds DigitSet
 	// when
 	ds.Add(4)
 	ds.Add(5)

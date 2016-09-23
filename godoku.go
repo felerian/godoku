@@ -1,3 +1,6 @@
+/*
+Package godoku provides a server for solving sudokus via HTTP.
+*/
 package main
 
 import (
@@ -7,9 +10,9 @@ import (
 	"net/http"
 )
 
-const MAX_SOLUTIONS int = 100
+const maxNrOfSolutions int = 100
 
-type Response struct {
+type response struct {
 	Solutions []sudoku.Sudoku `json:"solutions"`
 }
 
@@ -20,8 +23,8 @@ func handleSolve(rw http.ResponseWriter, req *http.Request) {
 		rw.WriteHeader(400)
 		return
 	}
-	response := Response{
-		Solutions: s.Solve(MAX_SOLUTIONS),
+	response := response{
+		Solutions: s.Solve(maxNrOfSolutions),
 	}
 	json.NewEncoder(rw).Encode(response)
 }

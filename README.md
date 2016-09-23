@@ -1,12 +1,15 @@
-[![Build Status](https://travis-ci.org/felerian/godoku.svg?branch=master)](https://travis-ci.org/felerian/godoku) [![Coverage Status](https://coveralls.io/repos/github/felerian/godoku/badge.svg?branch=master)](https://coveralls.io/github/felerian/godoku?branch=master)
+[![Build Status](https://travis-ci.org/felerian/godoku.svg?branch=master)](https://travis-ci.org/felerian/godoku)
+[![Coverage Status](https://coveralls.io/repos/github/felerian/godoku/badge.svg?branch=master)](https://coveralls.io/github/felerian/godoku?branch=master)
+[![Go Report Card](https://goreportcard.com/badge/github.com/felerian/godoku)](https://goreportcard.com/report/github.com/felerian/godoku)
+[![GoDoc](https://godoc.org/github.com/felerian/godoku?status.png)](https://godoc.org/github.com/felerian/godoku)
 
 Godoku
 ======
 
 A simple sudoku solver, written in Go.
 
-How to use
-----------
+Getting started
+---------------
 
 ```sh
 # fetch "godoku":

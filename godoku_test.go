@@ -28,9 +28,9 @@ func TestSolveSudokuWithManySolutions(t *testing.T) {
 	// when
 	handleSolve(rw, req)
 	// then
-	response := Response{}
-	json.Unmarshal([]byte(rw.Body.String()), &response)
-	count := len(response.Solutions)
+	res := response{}
+	json.Unmarshal([]byte(rw.Body.String()), &res)
+	count := len(res.Solutions)
 	if rw.Code != 200 {
 		t.Errorf("expected: status OK (200), actual: %d", rw.Code)
 	}
@@ -55,13 +55,13 @@ func TestSolveSudokuWithTooManySolutions(t *testing.T) {
 	req, _ := http.NewRequest("POST", "localhost:8080", bytes.NewBuffer(payload))
 	req.Header.Set("Content-Type", "application/json")
 	rw := httptest.NewRecorder()
-	expectedCount := MAX_SOLUTIONS
+	expectedCount := maxNrOfSolutions
 	// when
 	handleSolve(rw, req)
 	// then
-	response := Response{}
-	json.Unmarshal([]byte(rw.Body.String()), &response)
-	count := len(response.Solutions)
+	res := response{}
+	json.Unmarshal([]byte(rw.Body.String()), &res)
+	count := len(res.Solutions)
 	if rw.Code != 200 {
 		t.Errorf("expected: status OK (200), actual: %d", rw.Code)
 	}
