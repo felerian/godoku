@@ -5,6 +5,7 @@ package main
 
 import (
 	"encoding/json"
+	"github.com/felerian/godoku/solver"
 	"github.com/felerian/godoku/sudoku"
 	"log"
 	"net/http"
@@ -26,7 +27,7 @@ func handleSolve(rw http.ResponseWriter, req *http.Request) {
 		rw.WriteHeader(400)
 		return
 	}
-	solutions := s.Solve(maxNrOfSolutions)
+	solutions := solver.Solve(s, maxNrOfSolutions)
 	response := response{
 		Solutions: solutions,
 	}
